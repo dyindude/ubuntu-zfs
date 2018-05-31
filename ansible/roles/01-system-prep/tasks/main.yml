@@ -29,3 +29,53 @@
   when: (zfsprep_luks != true)
 - name: create root zpool
   shell: "zpool create {{ zfsprep_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_pool_type }} {{ zfsprep_root_parts | join(' ') }}"
+- name: create root dataset
+  zfs:
+    name: "{{ zfsprep_root_pool }}/ROOT"
+    state: present
+    extra_zfs_properties:
+      canmount: off
+      mountpoint: none
+- name: create root fs
+  zfs:
+    name: "{{ zfsprep_root_pool }}/ROOT/ubuntu"
+    state: present
+    extra_zfs_properties:
+      canmount: noauto
+      mountpoint: /
+- name: manually mount rpool/ROOT/ubuntu before creating other mountpoints
+  shell: zfs mount rpool/ROOT/ubuntu
+- name: create mountpoints in root pool
+  zfs:
+    name: "{{ item.name }}"
+    state: present
+    extra_zfs_properties:
+      "{{ item.properties }}"
+  with_items:
+    - "{{ zfsprep_root_volumes }}"
+- name: chmod 01777 /mnt/var/tmp
+  file:
+    path: /mnt/var/tmp
+    mode: 01777
+- name: run debootstrap and set devices=off
+  shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }}"
+- name: write /etc/hostname in chroot
+  copy:
+    content: "{{ zfsprep_hostname.short }}"
+    dest: /mnt/etc/hostname
+- name: write /etc/apt/sources.list in chroot
+  template:
+    src: sources.j2
+    dest: /mnt/etc/apt/sources.list
+- name: add hostname entries to /etc/hosts in chroot
+  lineinfile:
+    line: "127.0.0.1 {{ zfsprep_hostname.short }} {{ zfsprep_hostname.long }}"
+    path: /mnt/etc/hosts
+    state: present
+    insertbefore: BOF
+- name: mount special filesystems for chroot
+  shell: "{{ item }}"
+  with_items:
+    - mount --rbind /dev /mnt/dev
+    - mount --rbind /proc /mnt/proc
+    - mount --rbind /sys /mnt/sys

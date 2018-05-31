@@ -1,4 +1,8 @@
 ---
+zfsprep_ubuntu_release: bionic
+zfsprep_hostname:
+  short: zfsprep
+  long: zfsprep.dyindude.local
 zfsprep_target_disks:
   - /dev/sda
   - /dev/sdb
@@ -21,3 +25,28 @@ zfsprep_pool_opts:
   - "-O xattr=sa -O mountpoint=/ -R /mnt"
 zfsprep_root_pool: rpool
 zfsprep_pool_type: mirror
+zfsprep_root_volumes:
+  - name: "{{ zfsprep_root_pool }}/home"
+    properties:
+      setuid: off
+  - name: "{{ zfsprep_root_pool }}/home/root"
+    properties:
+      mountpoint: /root
+  - name: "{{ zfsprep_root_pool }}/var"
+    properties:
+      canmount: off
+      setuid: off
+      exec: off
+  - name: "{{ zfsprep_root_pool }}/var/cache"
+    properties:
+      com.sun:auto-snapshot: false
+  - name: "{{ zfsprep_root_pool }}/var/log"
+    properties:
+      acltype: posixacl
+      xattr: sa
+  - name: "{{ zfsprep_root_pool }}/var/spool"
+    properties: {}
+  - name: "{{ zfsprep_root_pool }}/var/tmp"
+    properties:
+      com.sun:auto-snapshot: false
+      exec: on
