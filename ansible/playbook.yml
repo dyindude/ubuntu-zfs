@@ -1,4 +1,6 @@
 - hosts: localhost
+  vars:
+    zfsprep_zap_disks: true
   roles:
     - role: 01-system-prep
 #- hosts: chroot

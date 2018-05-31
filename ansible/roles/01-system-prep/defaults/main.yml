@@ -1,2 +1,23 @@
 ---
-# defaults file for 01-system-prep
+zfsprep_target_disks:
+  - /dev/sda
+  - /dev/sdb
+  - /dev/sdc
+  - /dev/sdd
+zfsprep_root_disks:
+  - /dev/sda
+  - /dev/sdb
+zfsprep_root_parts:
+  - /dev/sda1
+  - /dev/sdb1
+zfsprep_zap_disks: false
+zfsprep_luks: false
+zfsprep_pool_opts:
+  - "-o ashift=12"
+  - "-O atime=off"
+  - "-O canmount=off"
+  - "-O compression=lz4"
+  - "-O normalization=formD"
+  - "-O xattr=sa -O mountpoint=/ -R /mnt"
+zfsprep_root_pool: rpool
+zfsprep_pool_type: mirror

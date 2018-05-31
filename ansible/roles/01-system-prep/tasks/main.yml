@@ -4,6 +4,28 @@
     name: "{{ item }}"
     state: present
   with_items:
+    - mdadm
     - debootstrap
     - gdisk
     - zfs-initramfs
+- name: forcibly zap disks
+  shell: "mdadm --zero-superblock --force {{ item }} && sgdisk --zap-all {{ item }}"
+  with_items:
+    - "{{ zfsprep_target_disks }}"
+  when: (zfsprep_zap_disks == true)
+- name: partition our root disks (boot partitions)
+  shell: "sgdisk -a1 -n2:34:2047 -t2:EF02 {{ item }} && sgdisk -n3:1M:+512M -t3:EF00 {{ item }}"
+  with_items:
+    - "{{ zfsprep_root_disks }}"
+- name: partition our root disks (LUKS)
+  shell: "sgdisk -n4:0:+512M -t4:8300 {{ item }} && sgdisk -n1:0:0 -t1:8300 {{ item }}"
+  with_items:
+    - "{{ zfsprep_root_disks }}"
+  when: (zfsprep_luks == true)
+- name: partition our root disks (unencrypted)
+  shell: "sgdisk -n1:0:0 -t1:BF01 {{ item }}"
+  with_items:
+    - "{{ zfsprep_root_disks }}"
+  when: (zfsprep_luks != true)
+- name: create root zpool
+  shell: "zpool create {{ zfsprep_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_pool_type }} {{ zfsprep_root_parts | join(' ') }}"
