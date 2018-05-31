@@ -1,0 +1,64 @@
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+          "false #pause so we can troubleshoot build"
+      ]
+    }
+  ],
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "<enter><enter><wait><f6><wait><esc><wait><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
+        "systemd.unit=multi-user.target<enter>",
+        "<wait10><wait10>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
+        "<wait>passwd ubuntu<enter>vagrant<enter>vagrant<enter><wait>",
+        "apt-get update<enter><wait10>",
+        "add-apt-repository universe<enter><wait10><wait10><wait10>",
+        "apt-get install -y openssh-server ansible<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_size": 8192,
+      "guest_os_type": "Ubuntu_64",
+      "headless": false,
+      "http_directory": "http",
+      "iso_urls": [
+        "install.iso"
+      ],
+      "iso_checksum_type": "sha256",
+      "iso_checksum": "a55353d837cbf7bc006cf49eeff05ae5044e757498e30643a9199b9a25bc9a34",
+      "ssh_username": "ubuntu",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "guest_additions_path": "VBoxGuestAdditions.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "packer-gentoo-x86_64",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "8192"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ],
+        [
+          "modifyvm", "{{.Name}}", "--rtcuseutc", "on"
+        ]
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "output": "builds/{{.Provider}}-ubuntu-zfs.box",
+      "type": "vagrant"
+    }
+  ]
+}
