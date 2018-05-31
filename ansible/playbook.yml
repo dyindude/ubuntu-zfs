@@ -1,0 +1,6 @@
+- hosts: localhost
+  roles:
+    - role: 01-system-prep
+#- hosts: chroot
+#  roles:
+#    - role: handbook-03-chroot 

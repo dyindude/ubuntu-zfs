@@ -1,6 +1,12 @@
 {
   "provisioners": [
     {
+      "type": "ansible-local",
+      "playbook_dir": "ansible",
+      "playbook_file": "ansible/playbook.yml",
+      "inventory_file": "ansible/inventory"
+    },
+    {
       "type": "shell",
       "inline": [
           "false #pause so we can troubleshoot build"
@@ -15,13 +21,15 @@
         "systemd.unit=multi-user.target<enter>",
         "<wait10><wait10>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
         "<wait>passwd ubuntu<enter>vagrant<enter>vagrant<enter><wait>",
-        "apt-get update<enter><wait10>",
-        "add-apt-repository universe<enter><wait10><wait10><wait10>",
+        "apt-get update && ",
+        "add-apt-repository universe && ",
         "apt-get install -y openssh-server ansible<enter>"
       ],
       "boot_wait": "5s",
       "disk_size": 8192,
       "guest_os_type": "Ubuntu_64",
+      "hard_drive_interface": "sata",
+      "sata_port_count": "4",
       "headless": false,
       "http_directory": "http",
       "iso_urls": [
@@ -37,21 +45,16 @@
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "packer-gentoo-x86_64",
       "vboxmanage": [
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--memory",
-          "8192"
-        ],
-        [
-          "modifyvm",
-          "{{.Name}}",
-          "--cpus",
-          "2"
-        ],
-        [
-          "modifyvm", "{{.Name}}", "--rtcuseutc", "on"
-        ]
+        [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
+        [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on" ],
+        [ "createhd", "--format", "VDI", "--filename", "disk1.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "disk2.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "disk3.vdi", "--size", "8192" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "disk1.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "disk2.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "disk3.vdi" ]
+
       ]
     }
   ],
