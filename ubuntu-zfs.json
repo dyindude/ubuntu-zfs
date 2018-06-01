@@ -4,7 +4,8 @@
       "type": "ansible-local",
       "playbook_dir": "ansible",
       "playbook_file": "ansible/playbook.yml",
-      "inventory_file": "ansible/inventory"
+      "inventory_file": "ansible/inventory",
+      "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 sudo ansible-playbook"
     },
     {
       "type": "shell",
@@ -19,7 +20,7 @@
       "boot_command": [
         "<enter><enter><wait><f6><wait><esc><wait><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
         "systemd.unit=multi-user.target<enter>",
-        "<wait10><wait10>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
+        "<wait10><wait10><wait5>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
         "<wait>passwd ubuntu<enter>vagrant<enter>vagrant<enter><wait>",
         "apt-get update && ",
         "add-apt-repository universe && ",

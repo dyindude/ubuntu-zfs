@@ -1,0 +1,48 @@
+---
+- name: generate en_US.UTF-8 locale #TODO add more locales
+  shell: locale-gen en_US.UTF-8
+- name: set LANG in /etc/default/locale
+  lineinfile:
+    line: LANG=en_US.UTF-8
+    path: /etc/default/locale
+    insertafter: EOF
+- name: set timezone
+  shell: echo CST6CDT > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+- name: ln -s /proc/self/mounts /etc/mtab
+  file:
+    src: /proc/self/mounts
+    dest: /etc/mtab
+    state: link
+- name: update apt cache
+  apt:
+    update_cache: yes
+- name: install our kernel
+  apt:
+    name: linux-image-generic
+    install_recommends: no
+    state: present
+- name: install zfs-initramfs
+  apt:
+    name: zfs-initramfs
+    state: present
+- name: install grub-pc #TODO MBR/UEFI toggle
+  apt:
+    name: grub-pc
+    state: present
+- name: set root password #hash below sets it to 'vagrant'
+  user:
+    name: root
+    password: $6$TwdlMzLJ6B$qqj/8soZa5eURXAa54wkjneV5VZG4r664A3VbSrcl4upJwSiiH4o78uTXRhLPwQJP7mXpKShr849mCAs24lTX/
+- name: fix mount race condition
+  shell: "zfs set mountpoint=legacy {{ item }}"
+  with_items:
+    - "{{ zfsprep_root_pool }}/var/log"
+    - "{{ zfsprep_root_pool }}/var/tmp"
+- name: update fstab
+  lineinfile:
+    line: "{{ zfsprep_root_pool}}{{ item }} {{ item }} zfs defaults 0 0"
+    path: /etc/fstab
+    insertafter: EOF
+  with_items:
+    - /var/log
+    - /var/tmp

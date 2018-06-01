@@ -2,4 +2,4 @@
 localhost ansible_connection=local ansible_become=yes
 
 [chroot]
-/mnt/gentoo ansible_connection=chroot
+/mnt ansible_connection=chroot ansible_become=yes

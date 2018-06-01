@@ -3,6 +3,13 @@
     zfsprep_zap_disks: true
   roles:
     - role: 01-system-prep
-#- hosts: chroot
-#  roles:
-#    - role: handbook-03-chroot 
+- hosts: chroot
+  gather_facts: no
+  tasks:
+    - name: make sure python is installed in our chroot
+      raw: "apt-get update && apt-get -y install python"
+- hosts: chroot
+  vars:
+    zfsprep_root_pool: rpool
+  roles:
+    - role: 02-chroot
