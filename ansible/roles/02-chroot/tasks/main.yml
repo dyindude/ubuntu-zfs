@@ -46,3 +46,20 @@
   with_items:
     - /var/log
     - /var/tmp
+- name: modify /etc/default/grub
+  replace:
+    path: /etc/default/grub
+    regexp: "{{ item.regex }}"
+    replace: "{{ item.replace }}"
+  with_items:
+    - regex: "^(GRUB_HIDDEN_TIMEOUT.*)"
+      replace: "#\\1"
+    - regex: "^GRUB_CMDLINE_LINUX_DEFAULT.*"
+      replace: 'GRUB_CMDLINE_LINUX_DEFAULT=""'
+    - regex: "^#(GRUB_TERMINAL.*)"
+      replace: "\\1"
+- shell: update-grub
+- shell: "grub-install {{ item }}"
+  with_items:
+    - "{{ zfsprep_root_disks }}"
+

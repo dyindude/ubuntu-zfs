@@ -11,5 +11,8 @@
 - hosts: chroot
   vars:
     zfsprep_root_pool: rpool
+    zfsprep_root_disks:
+      - /dev/sda
+      - /dev/sdb
   roles:
     - role: 02-chroot
