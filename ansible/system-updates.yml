@@ -1,0 +1,8 @@
+- hosts: localhost
+  tasks:
+    - apt:
+    	upgrade: dist 
+    	update_cache: yes
+    - apt:
+    	autoremove: yes
+    	purge: yes                       

@@ -1,0 +1,6 @@
+---
+packages:
+  - gdisk
+  - ansible
+  - vim
+  - gnupg2

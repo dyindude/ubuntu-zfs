@@ -16,3 +16,4 @@
       - /dev/sdb
   roles:
     - role: 02-chroot
+    - role: 03-post-setup

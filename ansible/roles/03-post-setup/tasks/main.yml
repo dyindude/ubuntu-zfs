@@ -1,0 +1,10 @@
+---
+- apt:
+    name: software-properties-common
+    state: present
+- shell: add-apt-repository universe
+- apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "{{ packages }}"

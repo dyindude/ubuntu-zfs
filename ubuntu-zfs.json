@@ -31,10 +31,10 @@
       "guest_os_type": "Ubuntu_64",
       "hard_drive_interface": "sata",
       "sata_port_count": "4",
-      "headless": false,
+      "headless": true,
       "http_directory": "http",
       "iso_urls": [
-        "install.iso"
+        "http://releases.ubuntu.com/18.04/ubuntu-18.04-desktop-amd64.iso"
       ],
       "iso_checksum_type": "sha256",
       "iso_checksum": "a55353d837cbf7bc006cf49eeff05ae5044e757498e30643a9199b9a25bc9a34",
