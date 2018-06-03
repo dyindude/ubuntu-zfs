@@ -28,7 +28,7 @@
     - "{{ zfsprep_root_disks }}"
   when: (zfsprep_luks != true)
 - name: create root zpool
-  shell: "zpool create {{ zfsprep_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_pool_type }} {{ zfsprep_root_parts | join(' ') }}"
+  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_parts | join(' ') }}"
 - name: create root dataset
   zfs:
     name: "{{ zfsprep_root_pool }}/ROOT"
@@ -57,8 +57,16 @@
   file:
     path: /mnt/var/tmp
     mode: 01777
+- name: create data zpool
+  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ zfsprep_data_disks | join(' ') }}"
+- name: create data dataset
+  zfs:
+    name: "{{ zfsprep_data_pool }}/data"
+    state: present
+    extra_zfs_properties:
+      mountpoint: /data
 - name: run debootstrap and set devices=off
-  shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }}"
+  shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }} && zfs set devices=off {{ zfsprep_data_pool }}"
 - name: write /etc/hostname in chroot
   copy:
     content: "{{ zfsprep_hostname.short }}"

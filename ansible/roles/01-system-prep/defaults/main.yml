@@ -14,17 +14,29 @@ zfsprep_root_disks:
 zfsprep_root_parts:
   - /dev/sda1
   - /dev/sdb1
+zfsprep_data_disks:
+  - /dev/sdc
+  - /dev/sdd
 zfsprep_zap_disks: false
 zfsprep_luks: false
-zfsprep_pool_opts:
+zfsprep_root_pool_opts:
   - "-o ashift=12"
   - "-O atime=off"
   - "-O canmount=off"
   - "-O compression=lz4"
   - "-O normalization=formD"
   - "-O xattr=sa -O mountpoint=/ -R /mnt"
+zfsprep_data_pool_opts:
+  - "-o ashift=12"
+  - "-O atime=off"
+  - "-O canmount=off"
+  - "-O compression=lz4"
+  - "-O normalization=formD"
+  - "-O xattr=sa -O mountpoint=/data -R /mnt"
 zfsprep_root_pool: rpool
-zfsprep_pool_type: mirror
+zfsprep_data_pool: bulk
+zfsprep_root_pool_type: mirror
+zfsprep_data_pool_type: mirror
 zfsprep_root_volumes:
   - name: "{{ zfsprep_root_pool }}/home"
     properties:

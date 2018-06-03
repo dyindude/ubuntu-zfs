@@ -44,7 +44,7 @@
       "ssh_wait_timeout": "10000s",
       "guest_additions_path": "VBoxGuestAdditions.iso",
       "virtualbox_version_file": ".vbox_version",
-      "vm_name": "packer-gentoo-x86_64",
+      "vm_name": "packer-ubuntu-zfs-x86_64",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "2" ],

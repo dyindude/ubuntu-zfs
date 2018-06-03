@@ -62,4 +62,20 @@
 - shell: "grub-install {{ item }}"
   with_items:
     - "{{ zfsprep_root_disks }}"
-
+- name: ensure zfs.target starts on boot
+  systemd:
+    name: zfs.target
+    enabled: yes
+- name: install firstboot service
+  template:
+    src: firstboot.service.j2
+    dest: /lib/systemd/system/firstboot.service
+- name: install firstboot script
+  template:
+    src: firstboot.j2
+    dest: /opt/firstboot
+    mode: 0777
+- name: enable firstboot service
+  systemd:
+    name: firstboot.service
+    enabled: yes

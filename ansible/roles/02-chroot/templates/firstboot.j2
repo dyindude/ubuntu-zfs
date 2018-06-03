@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+zpool import bulk
+systemctl disable firstboot.service
+rm /lib/systemd/system/firstboot.service
+rm $0

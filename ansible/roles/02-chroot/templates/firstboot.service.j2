@@ -1,0 +1,11 @@
+[Unit]
+Description=firstboot
+
+[Service]
+Type=oneshot
+ExecStart=/opt/firstboot
+ExecStop=/opt/firstboot
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
