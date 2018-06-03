@@ -44,7 +44,7 @@
       canmount: noauto
       mountpoint: /
 - name: manually mount rpool/ROOT/ubuntu before creating other mountpoints
-  shell: zfs mount rpool/ROOT/ubuntu
+  shell: "zfs mount {{ zfsprep_root_pool }}/ROOT/ubuntu"
 - name: create mountpoints in root pool
   zfs:
     name: "{{ item.name }}"
