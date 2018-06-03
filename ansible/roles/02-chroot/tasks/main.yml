@@ -29,6 +29,29 @@
   apt:
     name: grub-pc
     state: present
+  when: (zfsprep_efi != true)
+- apt:
+    name: dosfstools
+    state: present
+  when: (zfsprep_efi == true)
+- name: set up grub partitions for efi
+  shell: "mkdosfs -F32 -n EFI {{ item }}3"
+  with_items:
+    - "{{ zfsprep_root_disks }}"
+  when: (zfsprep_efi == true)
+- name: create efi mountpoint
+  file:
+    path: /boot/efi
+    state: directory
+  when: (zfsprep_efi == true)
+- name: update fstab with efi
+  shell: echo PARTUUID=$(blkid -s PARTUUID -o value /dev/sda3) /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab && mount /boot/efi
+  when: (zfsprep_efi == true)
+- name: install grub-efi-amd64
+  apt:
+    name: grub-efi-amd64
+    state: present
+  when: (zfsprep_efi == true)
 - name: set root password #hash below sets it to 'vagrant'
   user:
     name: root
@@ -62,6 +85,9 @@
 - shell: "grub-install {{ item }}"
   with_items:
     - "{{ zfsprep_root_disks }}"
+  when: (zfsprep_efi != true)
+- shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
+  when: (zfsprep_efi == true)
 - name: ensure zfs.target starts on boot
   systemd:
     name: zfs.target

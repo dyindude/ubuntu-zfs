@@ -1,2 +1,3 @@
 ---
 # defaults file for 02-chroot
+zfsprep_efi: true

@@ -18,8 +18,8 @@
     {
       "type": "virtualbox-iso",
       "boot_command": [
-        "<enter><enter><wait><f6><wait><esc><wait><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
-        "systemd.unit=multi-user.target<enter>",
+        "<down>e<wait><down><down><down><end><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
+        "systemd.unit=multi-user.target<f10>",
         "<wait10><wait10><wait5>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
         "<wait>passwd ubuntu<enter>vagrant<enter>vagrant<enter><wait>",
         "apt-get update && ",
@@ -29,8 +29,9 @@
       "boot_wait": "5s",
       "disk_size": 8192,
       "guest_os_type": "Ubuntu_64",
+      "iso_interface": "sata",
       "hard_drive_interface": "sata",
-      "sata_port_count": "4",
+      "sata_port_count": "5",
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
@@ -46,15 +47,16 @@
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "packer-ubuntu-zfs-x86_64",
       "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--firmware", "efi" ],
         [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
         [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk1.vdi", "--size", "8192" ],
         [ "createhd", "--format", "VDI", "--filename", "disk2.vdi", "--size", "8192" ],
         [ "createhd", "--format", "VDI", "--filename", "disk3.vdi", "--size", "8192" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "disk1.vdi" ],
+        [ "createhd", "--format", "VDI", "--filename", "disk4.vdi", "--size", "8192" ],
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "disk2.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "disk3.vdi" ]
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "disk3.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "hdd", "--medium", "disk4.vdi" ]
 
       ]
     }

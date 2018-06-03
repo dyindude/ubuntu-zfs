@@ -1,5 +1,6 @@
 ---
 zfsprep_ubuntu_release: bionic
+zfsprep_efi: true
 zfsprep_hostname:
   short: zfsprep
   long: zfsprep.dyindude.local
