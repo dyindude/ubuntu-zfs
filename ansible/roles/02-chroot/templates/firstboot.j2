@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-zpool import bulk
+zpool import {{ zfsprep_data_pool }}
 systemctl disable firstboot.service
 rm /lib/systemd/system/firstboot.service
 rm $0

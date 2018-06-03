@@ -34,7 +34,7 @@ zfsprep_data_pool_opts:
   - "-O normalization=formD"
   - "-O xattr=sa -O mountpoint=/data -R /mnt"
 zfsprep_root_pool: rpool
-zfsprep_data_pool: bulk
+#zfsprep_data_pool: bulk
 zfsprep_root_pool_type: mirror
 zfsprep_data_pool_type: mirror
 zfsprep_root_volumes:

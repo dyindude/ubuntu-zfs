@@ -1,4 +1,6 @@
 - hosts: localhost
+  vars_files:
+    - vars.yml
   vars:
     zfsprep_zap_disks: true
   roles:
@@ -9,6 +11,8 @@
     - name: make sure python is installed in our chroot
       raw: "apt-get update && apt-get -y install python"
 - hosts: chroot
+  vars_files:
+    - vars.yml
   vars:
     zfsprep_root_pool: rpool
     zfsprep_root_disks:
