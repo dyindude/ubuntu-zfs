@@ -1,0 +1,3 @@
+- hosts: localhost
+  tasks:
+    - debug: msg={{ hostvars[inventory_hostname]["ansible_devices"]["sda"]["links"]["ids"][0] }}

@@ -1,4 +1,8 @@
 ---
+- debug:
+    var: zfsprep_root_disks_by_id
+- debug:
+    var: zfsprep_target_disks
 - name: ensure live system has necessary packages installed
   apt:
     name: "{{ item }}"
@@ -16,19 +20,19 @@
 - name: partition our root disks (boot partitions)
   shell: "sgdisk -a1 -n2:34:2047 -t2:EF02 {{ item }} && sgdisk -n3:1M:+512M -t3:EF00 {{ item }}"
   with_items:
-    - "{{ zfsprep_root_disks }}"
+    - "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
 - name: partition our root disks (LUKS)
   shell: "sgdisk -n4:0:+512M -t4:8300 {{ item }} && sgdisk -n1:0:0 -t1:8300 {{ item }}"
   with_items:
-    - "{{ zfsprep_root_disks }}"
+    - "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
   when: (zfsprep_luks == true)
 - name: partition our root disks (unencrypted)
   shell: "sgdisk -n1:0:0 -t1:BF01 {{ item }}"
   with_items:
-    - "{{ zfsprep_root_disks }}"
+    - "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
   when: (zfsprep_luks != true)
 - name: create root zpool
-  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_disks | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list | join(' ') }}"
+  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list | join(' ') }}"
 - name: create root dataset
   zfs:
     name: "{{ zfsprep_root_pool }}/ROOT"
