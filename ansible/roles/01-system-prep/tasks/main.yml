@@ -28,7 +28,7 @@
     - "{{ zfsprep_root_disks }}"
   when: (zfsprep_luks != true)
 - name: create root zpool
-  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_parts | join(' ') }}"
+  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_disks | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list | join(' ') }}"
 - name: create root dataset
   zfs:
     name: "{{ zfsprep_root_pool }}/ROOT"

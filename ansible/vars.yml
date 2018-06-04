@@ -1,2 +1,10 @@
-zfsprep_data_pool: bulkk
+zfsprep_zap_disks: true
+zfsprep_data_pool: d
+zfsprep_root_pool: "{{ zfsprep_hostname.long }}"
 zfsprep_efi: true
+zfsprep_hostname:
+  short: zfsprep
+  long: zfsprep.dyindude.local
+zfsprep_root_disks:
+  - /dev/sda
+  - /dev/sdb

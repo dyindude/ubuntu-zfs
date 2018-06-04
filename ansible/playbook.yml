@@ -1,8 +1,6 @@
 - hosts: localhost
   vars_files:
     - vars.yml
-  vars:
-    zfsprep_zap_disks: true
   roles:
     - role: 01-system-prep
 - hosts: chroot
@@ -13,11 +11,6 @@
 - hosts: chroot
   vars_files:
     - vars.yml
-  vars:
-    zfsprep_root_pool: rpool
-    zfsprep_root_disks:
-      - /dev/sda
-      - /dev/sdb
   roles:
     - role: 02-chroot
     - role: 03-post-setup

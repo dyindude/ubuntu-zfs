@@ -4,14 +4,11 @@ zfsprep_efi: true
 zfsprep_hostname:
   short: zfsprep
   long: zfsprep.dyindude.local
-zfsprep_target_disks:
-  - /dev/sda
-  - /dev/sdb
-  - /dev/sdc
-  - /dev/sdd
+zfsprep_target_disks: "{{ zfsprep_root_disks }} + {{ zfsprep_data_disks }}"
 zfsprep_root_disks:
   - /dev/sda
   - /dev/sdb
+zfsprep_root_part_append: "1"
 zfsprep_root_parts:
   - /dev/sda1
   - /dev/sdb1
