@@ -4,8 +4,7 @@
       "type": "ansible-local",
       "playbook_dir": "ansible",
       "playbook_file": "ansible/playbook.yml",
-      "inventory_file": "ansible/inventory",
-      "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 sudo ansible-playbook"
+      "inventory_file": "ansible/inventory"
     },
     {
       "type": "shell",
@@ -21,10 +20,12 @@
         "<down>e<wait><down><down><down><end><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
         "systemd.unit=multi-user.target<f10>",
         "<wait10><wait10><wait5>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
-        "<wait>passwd ubuntu<enter>vagrant<enter>vagrant<enter><wait>",
+        "<wait>passwd<enter>vagrant<enter>vagrant<enter><wait>",
         "apt-get update && ",
         "add-apt-repository universe && ",
-        "apt-get install -y openssh-server ansible<enter>"
+        "apt-get install -y openssh-server ansible && ",
+        "echo PermitRootLogin yes >> /etc/ssh/sshd_config && ",
+        "service ssh restart<enter>"
       ],
       "boot_wait": "5s",
       "disk_size": 8192,
@@ -39,7 +40,7 @@
       ],
       "iso_checksum_type": "sha256",
       "iso_checksum": "a55353d837cbf7bc006cf49eeff05ae5044e757498e30643a9199b9a25bc9a34",
-      "ssh_username": "ubuntu",
+      "ssh_username": "root",
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
