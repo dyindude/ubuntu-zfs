@@ -37,7 +37,7 @@
 - name: set up grub partitions for efi
   shell: "mkdosfs -F32 -n EFI {{ item }}"
   with_items:
-    - "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list  }}"
+    - "{{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list  }}"
   when: (zfsprep_efi == true)
 - name: create efi mountpoint
   file:
@@ -84,7 +84,7 @@
 - shell: update-grub
 - shell: "grub-install {{ item }}"
   with_items:
-    - "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
+    - "{{ zfsprep_root_device_list }}"
   when: (zfsprep_efi != true)
 - shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy && umount /boot/efi && mount /dev/sdb3 /boot/efi && grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
   when: (zfsprep_efi == true)
