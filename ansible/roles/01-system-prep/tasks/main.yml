@@ -86,8 +86,10 @@
     state: present
     insertbefore: BOF
 - name: mount special filesystems for chroot
-  shell: "{{ item }}"
+  shell: "mount --rbind {{ item }}"
   with_items:
-    - mount --rbind /dev /mnt/dev
-    - mount --rbind /proc /mnt/proc
-    - mount --rbind /sys /mnt/sys
+    - /dev /mnt/dev
+    - /proc /mnt/proc
+    - /sys /mnt/sys
+  args:
+    warn: false
