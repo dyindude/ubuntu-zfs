@@ -17,5 +17,7 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 - `zfsprep_data_disks` - target disks for data pool
 - `zfsprep_root_pool_type` - pool type for root pool
 - `zfsprep_data_pool_type` - pool type for data pool
+- `zfsprep_extra_locales` - list of extra locales to install alongside `en_US.UTF-8`
+- `zfsprep_lang` - LANG to set in `/etc/default/locale`
 
 a few more in `ansible/roles/01-system-prep/defaults/main.yml`

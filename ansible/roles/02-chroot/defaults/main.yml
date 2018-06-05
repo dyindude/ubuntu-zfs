@@ -9,3 +9,6 @@ zfsprep_data_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_dat
 zfsprep_legacy_device_nodes: false
 zfsprep_root_part_append: "{{ zfsprep_legacy_device_nodes | ternary('1', '-part1') }}"
 zfsprep_boot_part_append: "{{ zfsprep_legacy_device_nodes | ternary('3', '-part3') }}"
+zfsprep_extra_locales: []
+zfsprep_locales: "{{ zfsprep_extra_locales + ['en_US.UTF-8'] }}"
+zfsprep_lang: "en_US.UTF-8"
