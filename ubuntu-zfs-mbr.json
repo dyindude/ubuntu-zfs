@@ -1,16 +1,8 @@
 {
+  "variables": {
+    "output_dir": "output-ubuntu-zfs-mbr"
+  },
   "provisioners": [
-    {
-      "type": "ansible-local",
-      "playbook_dir": "ansible",
-      "playbook_file": "ansible/disks.yml",
-      "inventory_file": "ansible/inventory",
-      "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook",
-      "extra_arguments": [
-          "-v"
-      ]
-    },
-
     {
       "type": "ansible-local",
       "playbook_dir": "ansible",
@@ -18,7 +10,8 @@
       "inventory_file": "ansible/inventory",
       "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook",
       "extra_arguments": [
-          "-v"
+          "-v",
+          "-e", "zfsprep_efi=false"
       ]
     },
     {
@@ -31,9 +24,10 @@
   "builders": [
     {
       "type": "virtualbox-iso",
+      "output_directory": "{{ user `output_dir` }}",
       "boot_command": [
-        "<down>e<wait><down><down><down><end><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
-        "systemd.unit=multi-user.target<f10>",
+        "<enter><enter><wait><f6><wait><esc><wait><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
+        "systemd.unit=multi-user.target<enter>",
         "<wait10><wait10><wait5>ubuntu<enter><enter><wait>sudo -i<enter><wait>",
         "<wait>passwd<enter>vagrant<enter>vagrant<enter><wait>",
         "apt-get update && ",
@@ -45,9 +39,8 @@
       "boot_wait": "5s",
       "disk_size": 8192,
       "guest_os_type": "Ubuntu_64",
-      "iso_interface": "sata",
       "hard_drive_interface": "sata",
-      "sata_port_count": "5",
+      "sata_port_count": "4",
       "headless": true,
       "http_directory": "http",
       "iso_urls": [
@@ -61,19 +54,17 @@
       "ssh_wait_timeout": "10000s",
       "guest_additions_path": "VBoxGuestAdditions.iso",
       "virtualbox_version_file": ".vbox_version",
-      "vm_name": "packer-ubuntu-zfs-x86_64",
+      "vm_name": "packer-ubuntu-zfs-mbr-x86_64",
       "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--firmware", "efi" ],
         [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
         [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk2.vdi", "--size", "8192" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk3.vdi", "--size", "8192" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk4.vdi", "--size", "8192" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "disk2.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "disk3.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "hdd", "--medium", "disk4.vdi" ]
-
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk2.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk3.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk4.vdi", "--size", "8192" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk2.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk3.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk4.vdi" ]
       ]
     }
   ],
