@@ -1,4 +1,7 @@
 {
+  "variables": {
+    "output_dir": "output-ubuntu-zfs-efi"
+  },
   "provisioners": [
     {
       "type": "ansible-local",
@@ -21,6 +24,7 @@
   "builders": [
     {
       "type": "virtualbox-iso",
+      "output_directory": "{{ user `output_dir` }}",
       "boot_command": [
         "<down>e<wait><down><down><down><end><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><wait>",
         "systemd.unit=multi-user.target<f10>",
@@ -57,13 +61,12 @@
         [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
         [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk2.vdi", "--size", "8192" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk3.vdi", "--size", "8192" ],
-        [ "createhd", "--format", "VDI", "--filename", "disk4.vdi", "--size", "8192" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "disk2.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "disk3.vdi" ],
-        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "hdd", "--medium", "disk4.vdi" ]
-
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk2.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk3.vdi", "--size", "8192" ],
+        [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk4.vdi", "--size", "8192" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk2.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "3", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk3.vdi" ],
+        [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "4", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk4.vdi" ]
       ]
     }
   ],
