@@ -10,7 +10,6 @@
           "-v"
       ]
     },
-
     {
       "type": "ansible-local",
       "playbook_dir": "ansible",
@@ -18,7 +17,8 @@
       "inventory_file": "ansible/inventory",
       "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook",
       "extra_arguments": [
-          "-v"
+          "-v",
+          "-e", "zfsprep_efi=true"
       ]
     },
     {
@@ -61,7 +61,7 @@
       "ssh_wait_timeout": "10000s",
       "guest_additions_path": "VBoxGuestAdditions.iso",
       "virtualbox_version_file": ".vbox_version",
-      "vm_name": "packer-ubuntu-zfs-x86_64",
+      "vm_name": "packer-ubuntu-zfs-efi-x86_64",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "efi" ],
         [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
