@@ -62,7 +62,7 @@
     path: /mnt/var/tmp
     mode: 01777
 - name: create data zpool
-  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ zfsprep_data_disks | join(' ') }}"
+  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ zfsprep_legacy_device_nodes | ternary((zfsprep_data_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_data_disks_by_id) | join(' ') }}"
 - name: create data dataset
   zfs:
     name: "{{ zfsprep_data_pool }}/data"

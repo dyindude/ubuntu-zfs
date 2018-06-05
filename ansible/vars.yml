@@ -8,4 +8,7 @@ zfsprep_hostname:
 zfsprep_root_disks:
   - sda
   - sdb
+zfsprep_data_disks:
+  - sdc
+  - sdd
 zfsprep_legacy_device_nodes: false
