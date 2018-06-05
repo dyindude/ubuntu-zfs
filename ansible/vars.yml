@@ -6,5 +6,9 @@ zfsprep_hostname:
   short: zfsprep
   long: zfsprep.dyindude.local
 zfsprep_root_disks:
-  - /dev/sda
-  - /dev/sdb
+  - sda
+  - sdb
+zfsprep_data_disks:
+  - sdc
+  - sdd
+zfsprep_legacy_device_nodes: false
