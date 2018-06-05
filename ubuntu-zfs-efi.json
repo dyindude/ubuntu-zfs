@@ -3,16 +3,6 @@
     {
       "type": "ansible-local",
       "playbook_dir": "ansible",
-      "playbook_file": "ansible/disks.yml",
-      "inventory_file": "ansible/inventory",
-      "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook",
-      "extra_arguments": [
-          "-v"
-      ]
-    },
-    {
-      "type": "ansible-local",
-      "playbook_dir": "ansible",
       "playbook_file": "ansible/playbook.yml",
       "inventory_file": "ansible/inventory",
       "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook",
