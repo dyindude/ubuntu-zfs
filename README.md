@@ -3,7 +3,7 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 
 ## Usage
 - Edit `ansible/vars.yml` with your desired settings.
-- Run `packer build -on-error=ask ubuntu-zfs.json` to test the playbook in a Virtualbox machine (currently testing via EFI)
+- Run `packer build -on-error=ask ubuntu-zfs-{{ mbr || efi }}.json` to test the playbook in a Virtualbox machine.
 - Playbook hasn't yet been tested on real hardware, will report back with more commits
 
 ## some handy variables
