@@ -51,7 +51,7 @@
     state: directory
   when: zfsprep_efi|default(false)|bool == true
 - name: update fstab with efi
-  shell: "echo PARTUUID=$(blkid -s PARTUUID -o value {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab && mount /boot/efi"
+  shell: "echo PARTUUID=$(blkid -s PARTUUID -o value {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 > /etc/fstab && mount /boot/efi"
   when: zfsprep_efi|default(false)|bool == true
 - name: update fstab with backup efi partitions
   shell: "echo \\# PARTUUID=$(blkid -s PARTUUID -o value {{ item }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab"
