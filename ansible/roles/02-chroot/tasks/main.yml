@@ -13,7 +13,7 @@
     path: /etc/default/locale
     insertafter: EOF
 - name: set timezone
-  shell: echo CST6CDT > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+  shell: "echo {{ zfsprep_timezone }} > /etc/timezone && rm /etc/localtime && dpkg-reconfigure -f noninteractive tzdata"
 - name: ln -s /proc/self/mounts /etc/mtab
   file:
     src: /proc/self/mounts
@@ -24,7 +24,7 @@
     update_cache: yes
 - name: install our kernel
   apt:
-    name: linux-image-generic
+    name: "{{ zfsprep_kernel_package }}"
     install_recommends: no
     state: present
 - name: install zfs-initramfs
@@ -63,10 +63,10 @@
     name: grub-efi-amd64
     state: present
   when: zfsprep_efi|default(false)|bool == true
-- name: set root password #hash below sets it to 'vagrant'
+- name: set root password
   user:
     name: root
-    password: $6$TwdlMzLJ6B$qqj/8soZa5eURXAa54wkjneV5VZG4r664A3VbSrcl4upJwSiiH4o78uTXRhLPwQJP7mXpKShr849mCAs24lTX/
+    password: "{{ zfsprep_root_password_hash }}"
 - name: fix mount race condition
   shell: "zfs set mountpoint=legacy {{ item }}"
   with_items:
@@ -97,7 +97,7 @@
   with_items:
     - "{{ zfsprep_root_device_list }}"
   when: zfsprep_efi|default(false)|bool != true
-- shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy && umount /boot/efi && mount /dev/sdb3 /boot/efi && grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
+- shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy && umount /boot/efi && mount /dev/sdb3 /boot/efi && grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy" #TODO: convert to use with_items instead of hardcoding 2nd+
   when: zfsprep_efi|default(false)|bool == true
 - name: ensure zfs.target starts on boot
   systemd:
