@@ -12,3 +12,5 @@ zfsprep_boot_part_append: "{{ zfsprep_legacy_device_nodes | ternary('3', '-part3
 zfsprep_extra_locales: []
 zfsprep_locales: "{{ zfsprep_extra_locales + ['en_US.UTF-8'] }}"
 zfsprep_lang: "en_US.UTF-8"
+zfsprep_kernel_package: "linux-image-generic"
+zfsprep_root_password_hash: "$6$TwdlMzLJ6B$qqj/8soZa5eURXAa54wkjneV5VZG4r664A3VbSrcl4upJwSiiH4o78uTXRhLPwQJP7mXpKShr849mCAs24lTX/" # "vagrant"

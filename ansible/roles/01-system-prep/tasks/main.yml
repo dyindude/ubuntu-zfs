@@ -1,6 +1,4 @@
 ---
-- debug:
-    var: zfsprep_efi
 - name: ensure live system has necessary packages installed
   apt:
     name: "{{ item }}"
