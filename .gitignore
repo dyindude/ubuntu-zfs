@@ -1,3 +1,4 @@
 builds
 packer_cache
 *.iso
+output*
