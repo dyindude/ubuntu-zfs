@@ -1,6 +1,6 @@
 ---
 - debug:
-    var: zfsprep_efi
+    var: zfsprep_efi|default(false)|bool == true
 - name: install locales
   locale_gen:
     name: "{{ item }}"
@@ -35,32 +35,34 @@
   apt:
     name: grub-pc
     state: present
-  when: zfsprep_efi != true
+  when: zfsprep_efi|default(false)|bool != true
 - apt:
     name: dosfstools
     state: present
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: set up grub partitions for efi
   shell: "mkdosfs -F32 -n EFI {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list  }}"
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: create efi mountpoint
   file:
     path: /boot/efi
     state: directory
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: update fstab with efi
   shell: "echo PARTUUID=$(blkid -s PARTUUID -o value {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab && mount /boot/efi"
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: update fstab with backup efi partitions
-  shell: "echo # PARTUUID=$(blkid -s PARTUUID -o value {{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list)[1:] }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab"
-  when: zfsprep_efi
+  shell: "echo \\# PARTUUID=$(blkid -s PARTUUID -o value {{ item }})  /boot/efi vfat nofail,x-systemd.device-timeout=1 0 1 >> /etc/fstab"
+  when: zfsprep_efi|default(false)|bool == true
+  with_items:
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list)[1:] }}"
 - name: install grub-efi-amd64
   apt:
     name: grub-efi-amd64
     state: present
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: set root password #hash below sets it to 'vagrant'
   user:
     name: root
@@ -94,9 +96,9 @@
 - shell: "grub-install {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
-  when: zfsprep_efi != true
+  when: zfsprep_efi|default(false)|bool != true
 - shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy && umount /boot/efi && mount /dev/sdb3 /boot/efi && grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
-  when: zfsprep_efi
+  when: zfsprep_efi|default(false)|bool == true
 - name: ensure zfs.target starts on boot
   systemd:
     name: zfs.target
