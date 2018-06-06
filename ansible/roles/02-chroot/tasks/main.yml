@@ -13,7 +13,7 @@
     path: /etc/default/locale
     insertafter: EOF
 - name: set timezone
-  shell: echo CST6CDT > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+  shell: "echo {{ zfsprep_timezone }} > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata"
 - name: ln -s /proc/self/mounts /etc/mtab
   file:
     src: /proc/self/mounts
