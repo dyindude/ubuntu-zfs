@@ -3,12 +3,12 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 
 ## Usage
 - Edit `ansible/vars.yml` with your desired settings.
-- For testing, I've been using `/dev/sdX` disk device references instead of `by-id` as recommended in the guide. (to be fixed)
 - Run `packer build -on-error=ask ubuntu-zfs.json` to test the playbook in a Virtualbox machine (currently testing via EFI)
 - Playbook hasn't yet been tested on real hardware, will report back with more commits
 
 ## some handy variables
 - `zfsprep_zap_disks: true` - forcibly nuke any partitions on existing disks
+- `zfsprep_legacy_device_nodes` - set to `true` to use `/dev/sdX` device names instead of `by-id`
 - `zfsprep_root_pool` - root pool name
 - `zfsprep_data_pool` - data pool name (separate from root pool)
 - `zfsprep_efi: true` - Use EFI layout, install grub-efi instead of grub-pc. Set to `false` to install grub-pc instead
@@ -19,5 +19,6 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 - `zfsprep_data_pool_type` - pool type for data pool
 - `zfsprep_extra_locales` - list of extra locales to install alongside `en_US.UTF-8`
 - `zfsprep_lang` - LANG to set in `/etc/default/locale`
+- `zfsprep_timezone` - timezone to set in resulting OS (defaults to `UTC`)
 
 a few more in `ansible/roles/01-system-prep/defaults/main.yml`
