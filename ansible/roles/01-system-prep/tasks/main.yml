@@ -12,7 +12,7 @@
   shell: "mdadm --zero-superblock --force {{ item }} && sgdisk --zap-all {{ item }}"
   with_items:
     - "{{ zfsprep_target_disks }}"
-  when: (zfsprep_zap_disks == true)
+  when: zfsprep_zap_disks | default(false) | bool == true
 - name: partition our root disks (boot partitions) #TODO: template partition sizes to default vars
   shell: "sgdisk -a1 -n2:34:2047 -t2:EF02 {{ item }} && sgdisk -n3:1M:+512M -t3:EF00 {{ item }}"
   with_items:
@@ -21,12 +21,12 @@
   shell: "sgdisk -n4:0:+512M -t4:8300 {{ item }} && sgdisk -n1:0:0 -t1:8300 {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
-  when: (zfsprep_luks == true)
+  when: zfsprep_luks | default(false) | bool == true
 - name: partition our root disks (unencrypted)
   shell: "sgdisk -n1:0:0 -t1:BF01 {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
-  when: (zfsprep_luks != true)
+  when: zfsprep_luks | default(false) | bool != true
 - name: create root zpool
   shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list | join(' ') }}"
 - name: create root dataset
