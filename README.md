@@ -6,6 +6,7 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 - Run `packer build -on-error=ask ubuntu-zfs-{{ mbr || efi }}.json` to test the playbook in a Virtualbox machine.
 - The last provisioner is simply a shell provisioner that runs `false`, so you can examine the resulting system once the playbook has completed.
 - Playbook hasn't yet been tested on real hardware, will report back with more commits
+  - it should go without saying, but trying to run this on real hardware **will result in data loss**
 
 ## some handy variables
 - `zfsprep_zap_disks: true` - forcibly nuke any partitions on existing disks
