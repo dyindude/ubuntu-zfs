@@ -23,15 +23,17 @@ zfsprep_root_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_roo
 zfsprep_data_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_data_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_data_disks_by_id) }}"
 zfsprep_root_part_append: "{{ zfsprep_legacy_device_nodes | ternary('1', '-part1') }}"
 zfsprep_boot_part_append: "{{ zfsprep_legacy_device_nodes | ternary('3', '-part3') }}"
-
 zfsprep_mbr_partition_flags: "-a1 -n2:34:2047  -t2:EF02"
 zfsprep_efi_partition_flags: "    -n3:1M:+512M -t3:EF00"
 zfsprep_root_partition_flags: "-n1:0:0         -t1:BF01"
 zfsprep_cryptboot_partition_flags: "-n4:0:+512M  -t4:8300"
 zfsprep_cryptroot_partition_flags: "-n1:0:0      -t1:8300"
-
 zfsprep_partition_flags: "{{ (zfsprep_efi | default(false) | bool | ternary(zfsprep_efi_partition_flags,zfsprep_mbr_partition_flags)) + ' ' + (zfsprep_luks | default(false) | bool | ternary(zfsprep_cryptboot_partition_flags + ' ' + zfsprep_cryptroot_partition_flags,zfsprep_root_partition_flags)) }}"
 zfsprep_luks: true
+zfsprep_luks_flags: "-c aes-xts-plain64 -s 256 -h sha256"
+zfsprep_luks_device_names:
+  - e0
+  - e1
 zfsprep_root_pool_opts:
   - "-o ashift=12"
   - "-O atime=off"

@@ -17,6 +17,12 @@
   shell: "sgdisk {{ zfsprep_partition_flags }} {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
+- name: set up LUKS devices
+  shell: "echo yes | cryptsetup luksFormat {{ zfsprep_luks_flags }} {{ item.0 }} && cryptsetup luksOpen {{ item.0 }} {{ item.1 }}"
+  with_together:
+    - "{{ zfsprep_root_device_list }}"
+    - "{{ zfsprep_luks_device_names }}"
+  when: zfsprep_luks | default(false) | bool == true
 - name: create root zpool
   shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list | join(' ') }}"
 - name: create root dataset
