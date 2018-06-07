@@ -7,10 +7,19 @@ zfsprep_data_disks_by_id: "{{ zfsprep_data_disks | map('extract', hostvars[inven
 zfsprep_root_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
 zfsprep_data_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_data_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_data_disks_by_id) }}"
 zfsprep_legacy_device_nodes: false
+#look for ways to refactor this:
 zfsprep_root_part_append: "{{ zfsprep_legacy_device_nodes | ternary('1', '-part1') }}"
 zfsprep_boot_part_append: "{{ zfsprep_legacy_device_nodes | ternary('3', '-part3') }}"
+zfsprep_crypt_part_append: "{{ zfsprep_legacy_device_nodes | ternary('4', '-part4') }}"
 zfsprep_extra_locales: []
 zfsprep_locales: "{{ zfsprep_extra_locales + ['en_US.UTF-8'] }}"
 zfsprep_lang: "en_US.UTF-8"
 zfsprep_kernel_package: "linux-image-generic"
 zfsprep_root_password_hash: "$6$TwdlMzLJ6B$qqj/8soZa5eURXAa54wkjneV5VZG4r664A3VbSrcl4upJwSiiH4o78uTXRhLPwQJP7mXpKShr849mCAs24lTX/" # "vagrant"
+zfsprep_luks: false
+zfsprep_luks_root_names:
+  - e0
+  - e1
+zfsprep_luks_data_names:
+  - e2
+  - e3

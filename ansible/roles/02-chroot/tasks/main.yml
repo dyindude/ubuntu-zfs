@@ -58,6 +58,22 @@
   when: zfsprep_efi|default(false)|bool == true
   with_items:
     - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list)[1:] }}"
+- name: update fstab with LUKS /boot volume
+  shell: "echo UUID=$(blkid -s UUID -o value {{ item }}) /boot ext2 defaults 0 2 >> /etc/fstab"
+  with_items:
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0 }}"
+  when: zfsprep_luks|default(false)|bool == true
+- name: install cryptsetup
+  apt:
+    name: cryptsetup
+    state: latest
+  when: zfsprep_luks|default(false)|bool == true
+- name: update crypttab
+  shell: "echo {{ item.0 }} UUID=$(blkid -s UUID -o value {{ item.1 }}) none luks,discard,initramfs >> /etc/crypttab"
+  with_together:
+    - "{{ zfsprep_luks_root_names + zfsprep_luks_data_names }}"
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + zfsprep_data_device_list }}"
+  when: zfsprep_luks|default(false)|bool == true
 - name: install grub-efi-amd64
   apt:
     name: grub-efi-amd64
@@ -80,6 +96,7 @@
   with_items:
     - /var/log
     - /var/tmp
+- shell: "update-initramfs -c -k all"
 - name: modify /etc/default/grub
   replace:
     path: /etc/default/grub
