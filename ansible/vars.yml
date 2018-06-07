@@ -2,6 +2,7 @@ zfsprep_zap_disks: true
 zfsprep_data_pool: d
 zfsprep_root_pool: "{{ zfsprep_hostname.long }}"
 zfsprep_efi: true #in the packerfiles, this gets overridden at the command line
+zfsprep_luks: false
 zfsprep_hostname:
   short: zfsprep
   long: zfsprep.dyindude.local
