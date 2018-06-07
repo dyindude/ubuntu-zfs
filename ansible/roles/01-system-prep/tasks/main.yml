@@ -18,13 +18,13 @@
   with_items:
     - "{{ zfsprep_root_device_list }}"
 - name: set up LUKS devices
-  shell: "echo {{ zfsprep_luks_passphrase }} | cryptsetup luksFormat {{ zfsprep_luks_flags }} {{ item.0 + zfsprep_root_part_append }} && echo {{ zfsprep_luks_passphrase }} | cryptsetup luksOpen {{ item.0 + zfsprep_root_part_append }} {{ item.1 }}"
+  shell: "echo {{ zfsprep_luks_passphrase }} | cryptsetup luksFormat {{ zfsprep_luks_flags }} {{ item.0 }} && echo {{ zfsprep_luks_passphrase }} | cryptsetup luksOpen {{ item.0 }} {{ item.1 }}"
   with_together:
-    - "{{ zfsprep_root_device_list }}"
-    - "{{ zfsprep_luks_device_names }}"
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + zfsprep_data_device_list }}"
+    - "{{ zfsprep_luks_root_names + zfsprep_luks_data_names }}"
   when: zfsprep_luks | default(false) | bool == true
 - name: create root zpool
-  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ (zfsprep_luks | default(false) | bool == true) | ternary(zfsprep_luks_device_names | map('regex_replace', '(.*)', '/dev/mapper/\\g<1>') | list, zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) | join(' ') }}"
+  shell: "zpool create {{ zfsprep_root_pool_opts | join(' ') }} {{ zfsprep_root_pool }} {{ zfsprep_root_pool_type }} {{ (zfsprep_luks | default(false) | bool == true) | ternary(zfsprep_luks_root_names | map('regex_replace', '(.*)', '/dev/mapper/\\g<1>') | list, zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) | join(' ') }}"
 - name: create root dataset
   zfs:
     name: "{{ zfsprep_root_pool }}/ROOT"
@@ -54,7 +54,7 @@
     path: /mnt/var/tmp
     mode: 01777
 - name: create data zpool
-  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ zfsprep_data_device_list | join(' ') }}"
+  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ (zfsprep_luks | default(false) | bool == true) | ternary(zfsprep_luks_data_names | map('regex_replace', '(.*)', '/dev/mapper/\\g<1>') | list, zfsprep_data_device_list) | join(' ') }}"
 - name: create data dataset
   zfs:
     name: "{{ zfsprep_data_pool }}/data"

@@ -17,6 +17,9 @@ zfsprep_lang: "en_US.UTF-8"
 zfsprep_kernel_package: "linux-image-generic"
 zfsprep_root_password_hash: "$6$TwdlMzLJ6B$qqj/8soZa5eURXAa54wkjneV5VZG4r664A3VbSrcl4upJwSiiH4o78uTXRhLPwQJP7mXpKShr849mCAs24lTX/" # "vagrant"
 zfsprep_luks: false
-zfsprep_luks_device_names:
+zfsprep_luks_root_names:
   - e0
   - e1
+zfsprep_luks_data_names:
+  - e2
+  - e3
