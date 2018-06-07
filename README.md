@@ -13,7 +13,9 @@ Ansible playbook that implements https://github.com/zfsonlinux/zfs/wiki/Ubuntu-1
 - `zfsprep_root_pool` - root pool name
 - `zfsprep_data_pool` - data pool name (separate from root pool)
 - `zfsprep_efi: true` - Use EFI layout, install grub-efi instead of grub-pc. Set to `false` to install grub-pc instead
-- `zfsprep_luks` - LUKS support, currently only creates the extra partitions, does NOT set up LUKS
+- `zfsprep_luks` - LUKS support
+- `zfsprep_luks_flags` - flags to pass to luksFormat
+- `zfsprep_luks_passphrase` - passphrase for luksFormat/luksOpen
 - `zfsprep_hostname` - short and FQDN hostnames to configure in the target OS
 - `zfsprep_root_disks` - target disks for root pool
 - `zfsprep_data_disks` - target disks for data pool
