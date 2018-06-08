@@ -7,16 +7,14 @@ zfsprep_hostname:
   long: zfsprep.dyindude.local
 zfsprep_root_pool: rpool
 zfsprep_data_pool: bulk
-zfsprep_root_pool_type: mirror
-zfsprep_data_pool_type: mirror
+zfsprep_root_pool_type: ""
+zfsprep_data_pool_type: ""
 zfsprep_legacy_device_nodes: false
 zfsprep_target_disks: "{{ zfsprep_legacy_device_nodes | ternary(((zfsprep_root_disks + zfsprep_data_disks) | map('regex_replace', '(.*)', '/dev/\\g<1>') | list),(zfsprep_root_disks_by_id + zfsprep_data_disks_by_id)) }}"
 zfsprep_root_disks:
   - sda
   - sdb
-zfsprep_data_disks:
-  - sdc
-  - sdd
+zfsprep_data_disks: []
 zfsprep_root_disks_by_id: "{{ zfsprep_root_disks | map('extract', hostvars[inventory_hostname]['ansible_devices'], ['links', 'ids', 0]) | list | map('regex_replace', '(.*)', '/dev/disk/by-id/\\g<1>') | list }}"
 zfsprep_data_disks_by_id: "{{ zfsprep_data_disks | map('extract', hostvars[inventory_hostname]['ansible_devices'], ['links', 'ids', 0]) | list | map('regex_replace', '(.*)', '/dev/disk/by-id/\\g<1>') | list }}"
 zfsprep_root_device_list: "{{ zfsprep_legacy_device_nodes | ternary((zfsprep_root_disks | map('regex_replace', '(.*)', '/dev/\\g<1>') | list), zfsprep_root_disks_by_id) }}"
