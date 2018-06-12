@@ -61,7 +61,7 @@
 - name: update fstab with LUKS /boot volume
   shell: "echo UUID=$(blkid -s UUID -o value {{ item }}) /boot ext2 defaults 0 2 >> /etc/fstab"
   with_items:
-    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0 }}"
+    - "{{ (zfsprep_root_device_list | length > 1) | ternary('/dev/md0', (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0) }}"
   when: zfsprep_luks|default(false)|bool == true
 - name: install cryptsetup
   apt:
@@ -109,6 +109,11 @@
       replace: 'GRUB_CMDLINE_LINUX_DEFAULT=""'
     - regex: "^#(GRUB_TERMINAL.*)"
       replace: "\\1"
+- name: install mdadm in chroot
+  apt:
+    name: mdadm
+    state: latest
+  when: zfsprep_luks|default(false)|bool == true
 - shell: update-grub
 - shell: "grub-install {{ item }}"
   with_items:

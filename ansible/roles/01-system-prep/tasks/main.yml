@@ -63,10 +63,13 @@
     extra_zfs_properties:
       mountpoint: /data
   when: zfsprep_data_disks | length > 0
-- name: format and mount boot for LUKS #TODO - create on other root disks, only mount one
+- name: create md0 for LUKS
+  shell: "echo yes | mdadm --create /dev/md0 --level=1 --raid-devices={{ zfsprep_root_device_list | length }} {{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list | join(' ') }}"
+  when: (zfsprep_root_device_list | length > 1) and (zfsprep_luks | default(false) | bool == true)
+- name: format and mount /mnt/boot for LUKS
   shell: "mke2fs -t ext2 {{ item }} && mkdir /mnt/boot && mount {{ item }} /mnt/boot"
   with_items:
-    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0 }}"
+    - "{{ (zfsprep_root_device_list | length > 1) | ternary('/dev/md0', (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0) }}"
   when: zfsprep_luks | default(false) | bool == true
 - name: run debootstrap and set devices=off for root pool
   shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }}"

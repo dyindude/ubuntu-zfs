@@ -34,9 +34,7 @@ zfsprep_luks_flags: "-c aes-xts-plain64 -s 256 -h sha256"
 zfsprep_luks_root_names:
   - e0
   - e1
-zfsprep_luks_data_names:
-  - e2
-  - e3
+zfsprep_luks_data_names: []
 zfsprep_luks_passphrase: "secret"
 zfsprep_root_pool_opts:
   - "-o ashift=12"
