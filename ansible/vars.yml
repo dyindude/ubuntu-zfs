@@ -2,17 +2,17 @@ zfsprep_zap_disks: true
 zfsprep_data_pool: d
 zfsprep_root_pool: "{{ zfsprep_hostname.long }}"
 zfsprep_efi: true #in the packerfiles, this gets overridden at the command line
-zfsprep_luks: false
+zfsprep_luks: true
 zfsprep_hostname:
   short: zfsprep
   long: zfsprep.dyindude.local
 zfsprep_root_disks:
   - sda
   - sdb
-zfsprep_data_disks:
-  - sdc
-  - sdd
-zfsprep_root_pool_type: "mirror"
-zfsprep_data_pool_type: "mirror"
+#zfsprep_data_disks:
+#  - sdc
+#  - sdd
+#zfsprep_root_pool_type: "mirror"
+#zfsprep_data_pool_type: "mirror"
 zfsprep_legacy_device_nodes: false
 zfsprep_timezone: "America/Chicago"

@@ -61,7 +61,7 @@
 - name: update fstab with LUKS /boot volume
   shell: "echo UUID=$(blkid -s UUID -o value {{ item }}) /boot ext2 defaults 0 2 >> /etc/fstab"
   with_items:
-    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0 }}"
+    - "{{ (zfsprep_root_device_list | length > 1) | ternary('/dev/md0', (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0) }}"
   when: zfsprep_luks|default(false)|bool == true
 - name: install cryptsetup
   apt:
@@ -109,13 +109,26 @@
       replace: 'GRUB_CMDLINE_LINUX_DEFAULT=""'
     - regex: "^#(GRUB_TERMINAL.*)"
       replace: "\\1"
+- name: install mdadm in chroot
+  apt:
+    name: mdadm
+    state: latest
+  when: zfsprep_luks|default(false)|bool == true
 - shell: update-grub
 - shell: "grub-install {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
   when: zfsprep_efi|default(false)|bool != true
-- shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy && umount /boot/efi && mount /dev/sdb3 /boot/efi && grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy" #TODO: convert to use with_items instead of hardcoding 2nd+
+- name: install grub efi on primary disk
+  shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
   when: zfsprep_efi|default(false)|bool == true
+- name: write grub boot sector/setup efi on secondary disks
+  shell: "dd if={{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }} of={{ item.0 }} && efibootmgr -c -g -d {{ item.1 }} -p 3 -L 'ubuntu-{{ item.2 }}' -l '\\EFI\\Ubuntu\\grubx64.efi'"
+  with_together:
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list)[1:] }}"
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>') | list)[1:] }}"
+    - "{{ zfsprep_root_disks[1:] }}"
+  when: (zfsprep_efi|default(false)|bool == true) and (zfsprep_root_device_list | length > 1)
 - name: ensure zfs.target starts on boot
   systemd:
     name: zfs.target
