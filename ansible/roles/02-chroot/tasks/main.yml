@@ -114,9 +114,11 @@
   with_items:
     - "{{ zfsprep_root_device_list }}"
   when: zfsprep_efi|default(false)|bool != true
-- shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
+- name: install grub efi on primary disk
+  shell: "grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --recheck --no-floppy"
   when: zfsprep_efi|default(false)|bool == true
-- shell: "dd if={{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }} of={{ item.0 }} && efibootmgr -c -g -d {{ item.1 }} -p 3 -L 'ubuntu-{{ item.2 }}' -l '\EFI\Ubuntu\grubx64.efi'"
+- name: write grub boot sector/setup efi on secondary disks
+  shell: "dd if={{ zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list | first }} of={{ item.0 }} && efibootmgr -c -g -d {{ item.1 }} -p 3 -L 'ubuntu-{{ item.2 }}' -l '\\EFI\\Ubuntu\\grubx64.efi'"
   with_together:
     - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_boot_part_append) | list)[1:] }}"
     - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>') | list)[1:] }}"

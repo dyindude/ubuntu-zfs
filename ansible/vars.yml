@@ -8,7 +8,7 @@ zfsprep_hostname:
   long: zfsprep.dyindude.local
 zfsprep_root_disks:
   - sda
-#  - sdb
+  - sdb
 #zfsprep_data_disks:
 #  - sdc
 #  - sdd
