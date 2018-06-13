@@ -58,7 +58,7 @@
       "vm_name": "packer-ubuntu-zfs-efi-x86_64",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--firmware", "efi" ],
-        [ "modifyvm", "{{.Name}}", "--memory", "8192" ],
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
         [ "modifyvm", "{{.Name}}", "--cpus", "2" ],
         [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on" ],
         [ "createhd", "--format", "VDI", "--filename", "{{ user `output_dir` }}/disk2.vdi", "--size", "8192" ],

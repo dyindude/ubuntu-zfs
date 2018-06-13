@@ -146,3 +146,12 @@
   systemd:
     name: firstboot.service
     enabled: yes
+- name: create swap zvol
+  zfs:
+    name: "{{ zfsprep_root_pool }}/swap "
+    state: present
+    extra_zfs_properties:
+      "{{ zfsprep_swap_opts }}"
+- name: mkswap
+  shell: "mkswap -f /dev/zvol/{{ zfsprep_root_pool }}/swap && echo /dev/zvol/{{ zfsprep_root_pool }}/swap none swap defaults 0 0 >> /etc/fstab && swapon -av"
+  when: zfsprep_swap|default(false)|bool == true
