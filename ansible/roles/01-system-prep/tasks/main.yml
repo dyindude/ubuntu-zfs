@@ -82,8 +82,8 @@
     dest: /mnt/etc/hostname
 - name: write default network config in chroot
   template:
-    src: netplan.j2
-    dest: "/mnt/etc/netplan/{{ zfsprep_netplan_interface }}.yml"
+    src: network.j2
+    dest: "/mnt/etc/systemd/network/{{ zfsprep_netplan_interface }}.network"
 - name: write /etc/apt/sources.list in chroot
   template:
     src: sources.j2
