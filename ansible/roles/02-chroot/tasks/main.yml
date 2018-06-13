@@ -161,4 +161,7 @@
   systemd:
     name: firstboot.service
     enabled: yes
-
+- name: enable systemd-networkd service
+  systemd:
+    name: systemd-networkd
+    enabled: yes
