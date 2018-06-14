@@ -8,3 +8,20 @@
     state: present
   with_items:
     - "{{ packages }}"
+- name: explicitly write nocompress to /etc/logrotate.conf
+  replace:
+    path: /etc/logrotate.conf
+    regexp: '^.*compress$'
+    replace: 'nocompress'
+- name: find files in /etc/logrotate.d
+  find:
+    paths: /etc/logrotate.d
+    file_type: file
+  register: zfsprep_logrotate_jobs
+- name: comment all compress from logrotate.conf
+  replace:
+    path: "{{ item.path }}"
+    regexp: '^(.*compress.*)$'
+    replace: '#\1'
+  with_items: "{{ zfsprep_logrotate_jobs.files }}"
+
