@@ -9,10 +9,16 @@ zfsprep_hostname:
 zfsprep_root_disks:
   - sda
   - sdb
-#zfsprep_data_disks:
-#  - sdc
-#  - sdd
-#zfsprep_root_pool_type: "mirror"
-#zfsprep_data_pool_type: "mirror"
+zfsprep_data_disks:
+  - sdc
+  - sdd
+zfsprep_root_pool_type: "mirror"
+zfsprep_data_pool_type: "mirror"
 zfsprep_legacy_device_nodes: false
 zfsprep_timezone: "America/Chicago"
+zfsprep_luks_root_names:
+  - e0
+  - e1
+zfsprep_luks_data_names:
+  - e2
+  - e3

@@ -13,14 +13,18 @@
   with_items:
     - "{{ zfsprep_target_disks }}"
   when: zfsprep_zap_disks | default(false) | bool == true
-- name: set up partitions
+- name: set up root disk partitions
   shell: "sgdisk {{ zfsprep_partition_flags }} {{ item }}"
   with_items:
     - "{{ zfsprep_root_device_list }}"
+- name: set up data disk partitions
+  shell: "sgdisk {{ zfsprep_data_partition_flags }} {{ item }}"
+  with_items:
+    - "{{ zfsprep_data_device_list }}"
 - name: set up LUKS devices
   shell: "echo {{ zfsprep_luks_passphrase }} | cryptsetup luksFormat {{ zfsprep_luks_flags }} {{ item.0 }} && echo {{ zfsprep_luks_passphrase }} | cryptsetup luksOpen {{ item.0 }} {{ item.1 }}"
   with_together:
-    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + zfsprep_data_device_list }}"
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + (zfsprep_data_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_data_part_append) | list) }}"
     - "{{ zfsprep_luks_root_names + zfsprep_luks_data_names }}"
   when: zfsprep_luks | default(false) | bool == true
 - name: create root zpool
@@ -54,7 +58,7 @@
     path: /mnt/var/tmp
     mode: 01777
 - name: create data zpool
-  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ (zfsprep_luks | default(false) | bool == true) | ternary(zfsprep_luks_data_names | map('regex_replace', '(.*)', '/dev/mapper/\\g<1>') | list, zfsprep_data_device_list) | join(' ') }}"
+  shell: "zpool create {{ zfsprep_data_pool_opts | join(' ') }} {{ zfsprep_data_pool }} {{ zfsprep_data_pool_type }} {{ (zfsprep_luks | default(false) | bool == true) | ternary(zfsprep_luks_data_names | map('regex_replace', '(.*)', '/dev/mapper/\\g<1>') | list, zfsprep_data_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_data_part_append) | list) | join(' ') }}"
   when: zfsprep_data_disks | length > 0
 - name: create data dataset
   zfs:
