@@ -20,6 +20,7 @@ zfsprep_legacy_device_nodes: false
 #look for ways to refactor this:
 zfsprep_root_part_append: "{{ zfsprep_legacy_device_nodes | ternary('1', '-part1') }}"
 zfsprep_data_part_append: "{{ zfsprep_legacy_device_nodes | ternary('1', '-part1') }}"
+zfsprep_data_partitions: false
 zfsprep_boot_part_append: "{{ zfsprep_legacy_device_nodes | ternary('3', '-part3') }}"
 zfsprep_crypt_part_append: "{{ zfsprep_legacy_device_nodes | ternary('4', '-part4') }}"
 zfsprep_extra_locales: []

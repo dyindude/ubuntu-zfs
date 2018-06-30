@@ -72,7 +72,7 @@
   shell: "echo {{ item.0 }} UUID=$(blkid -s UUID -o value {{ item.1 }}) none luks,discard,initramfs >> /etc/crypttab"
   with_together:
     - "{{ zfsprep_luks_root_names + zfsprep_luks_data_names }}"
-    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + (zfsprep_data_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_data_part_append) | list) }}"
+    - "{{ (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_root_part_append) | list) + (zfsprep_data_partitions | ternary((zfsprep_data_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_data_part_append) | list),zfsprep_data_device_list)) }}"
   when: zfsprep_luks|default(false)|bool == true
 - name: install grub-efi-amd64
   apt:
