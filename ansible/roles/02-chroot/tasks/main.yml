@@ -125,8 +125,10 @@
   with_items:
     - regex: "^(GRUB_HIDDEN_TIMEOUT.*)"
       replace: "#\\1"
-    - regex: "^GRUB_CMDLINE_LINUX_DEFAULT.*"
+    - regex: "^GRUB_CMDLINE_LINUX_DEFAULT=.*"
       replace: 'GRUB_CMDLINE_LINUX_DEFAULT=""'
+    - regex: "^GRUB_CMDLINE_LINUX=.*"
+      replace: 'GRUB_CMDLINE_LINUX="{{ zfsprep_grub_cmdline }}"'
     - regex: "^#(GRUB_TERMINAL.*)"
       replace: "\\1"
 - shell: update-grub
