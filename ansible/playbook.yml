@@ -1,4 +1,4 @@
-- hosts: localhost
+- hosts: live
   vars_files:
     - vars.yml
   roles:
