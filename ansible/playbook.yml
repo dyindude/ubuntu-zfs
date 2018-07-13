@@ -14,3 +14,4 @@
   roles:
     - role: 02-chroot
     - role: 03-post-setup
+    - role: 03-luks-keys

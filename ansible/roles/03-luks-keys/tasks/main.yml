@@ -1,0 +1,17 @@
+---
+- name: install net-tools
+  apt:
+    name: net-tools
+    state: present
+- name: install initramfs-hook script for netluks decrypt
+  template:
+    src: net-tools.j2
+    dest: /etc/initramfs-tools/hooks/net-tools
+    mode: 0744
+- name: install initramfs-scripts script for netluks decrypt
+  template:
+    src: net-unlock.j2
+    dest: /etc/initramfs-tools/scripts/local-top/net-unlock
+    mode: 0744
+- name: update-initramfs
+  shell: update-initramfs -u -k all
