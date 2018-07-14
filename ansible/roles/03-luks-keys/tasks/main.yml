@@ -13,5 +13,10 @@
     src: net-unlock.j2
     dest: /etc/initramfs-tools/scripts/local-top/net-unlock
     mode: 0744
+- name: insert our key script
+  template:
+    src: keyscript.j2
+    dest: /etc/initramfs-tools/conf.d/keyscript
+    mode: 0744
 - name: update-initramfs
   shell: update-initramfs -u -k all

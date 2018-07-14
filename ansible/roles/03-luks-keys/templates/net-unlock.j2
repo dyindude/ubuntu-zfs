@@ -25,7 +25,7 @@ esac
 
 # source for log_*_msg() functions, see LP: #272301
 . /scripts/functions
-
+configure_networking
 #
 # Helper functions
 #
@@ -320,7 +320,7 @@ setup_mapping()
 		export CRYPTTAB_TRIED="$count"
 		count=$(( $count + 1 ))
 
-		cryptkeyscript="get_key"
+		cryptkeyscript="sh /conf/conf.d/keyscript"
 
 		if [ ! -e "$NEWROOT" ]; then
 			if ! crypttarget="$crypttarget" cryptsource="$cryptsource" \
@@ -397,12 +397,6 @@ setup_mapping()
 #
 # Begin real processing
 #
-
-get_key()
-{
-	#so whatever we put here, we can use for logic to decrypt/provide a key. neat
-	echo -n "secret"
-}
 
 # Do we have any settings from the /conf/conf.d/cryptroot file?
 if [ -r /conf/conf.d/cryptroot ]; then
