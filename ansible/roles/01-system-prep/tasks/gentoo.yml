@@ -1,0 +1,31 @@
+- name: ensure tmp folder exists
+  file:
+    path: /mnt/tmp
+    state: directory
+- name: get stage3 tarball
+  get_url:
+    url: "{{ gentoo_stage3_url }}"
+    dest: "/mnt/{{ gentoo_stage3_url | basename }}"
+    tmp_dest: "/mnt/tmp"
+    checksum: "sha512:{{ gentoo_latest_stage3_sha512sum }}"
+- name: get portage tarball
+  get_url:
+    url: "{{ gentoo_mirror }}/snapshots/portage-latest.tar.bz2"
+    dest: "/mnt/portage-latest.tar.bz2"
+    tmp_dest: "/mnt/"
+- name: extract stage3 tarball to /mnt/gentoo
+  unarchive:
+    src: "/mnt/{{ gentoo_stage3_url | basename }}"
+    dest: "/mnt/"
+    remote_src: yes
+    extra_opts:
+      - "--xattrs"
+      - "--numeric-owner"
+- name: extract portage tarball to /mnt/gentoo/usr
+  unarchive:
+    src: "/mnt/portage-latest.tar.bz2"
+    dest: "/mnt/usr"
+    remote_src: yes
+- name: set devices=off for root pool
+  shell: "zfs set devices=off {{ zfsprep_root_pool }}"
+

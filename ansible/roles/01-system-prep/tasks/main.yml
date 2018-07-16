@@ -77,8 +77,8 @@
   with_items:
     - "{{ (zfsprep_root_device_list | length > 1) | ternary('/dev/md0', (zfsprep_root_device_list | map('regex_replace', '(.*)', '\\g<1>' + zfsprep_crypt_part_append) | list).0) }}"
   when: zfsprep_luks | default(false) | bool == true
-- name: run debootstrap and set devices=off for root pool
-  shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }}"
+- name: include os specific tasks
+  include_tasks: "{{ zfsprep_distro }}.yml"
 - name: set devices=off for data pool
   shell: "zfs set devices=off {{ zfsprep_data_pool }}"
   when: zfsprep_data_disks | length > 0
@@ -86,14 +86,6 @@
   copy:
     content: "{{ zfsprep_hostname.short }}"
     dest: /mnt/etc/hostname
-- name: write default network config in chroot
-  template:
-    src: network.j2
-    dest: "/mnt/etc/systemd/network/{{ zfsprep_netplan_interface }}.network"
-- name: write /etc/apt/sources.list in chroot
-  template:
-    src: sources.j2
-    dest: /mnt/etc/apt/sources.list
 - name: add hostname entries to /etc/hosts in chroot
   lineinfile:
     line: "127.0.0.1 {{ zfsprep_hostname.short }} {{ zfsprep_hostname.long }}"

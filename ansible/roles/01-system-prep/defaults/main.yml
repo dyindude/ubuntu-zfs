@@ -1,5 +1,14 @@
 ---
+zfsprep_distro: "ubuntu"
 zfsprep_ubuntu_release: bionic
+
+gentoo_mirror: "http://gentoo.osuosl.org"
+gentoo_latest_stage3_url: "{{ gentoo_mirror }}/releases/amd64/autobuilds/latest-stage3-amd64.txt"
+gentoo_latest_stage3: "{{ lookup('url', gentoo_latest_stage3_url ) | regex_replace('.*,(.*) .*', '\\1') }}"
+gentoo_stage3_url: "{{ gentoo_mirror }}/releases/amd64/autobuilds/{{ gentoo_latest_stage3 }}"
+gentoo_stage3_digests_url: "{{ gentoo_stage3_url }}.DIGESTS"
+gentoo_latest_stage3_sha512sum: "{{ lookup('url', gentoo_stage3_digests_url).split(',').1.split(' ').0 }}"
+
 zfsprep_zap_disks: false
 zfsprep_efi: true
 zfsprep_netplan: true

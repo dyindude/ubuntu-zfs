@@ -1,0 +1,10 @@
+- name: run debootstrap and set devices=off for root pool
+  shell: "debootstrap {{ zfsprep_ubuntu_release }} /mnt && zfs set devices=off {{ zfsprep_root_pool }}"
+- name: write default network config in chroot
+  template:
+    src: network.j2
+    dest: "/mnt/etc/systemd/network/{{ zfsprep_netplan_interface }}.network"
+- name: write /etc/apt/sources.list in chroot
+  template:
+    src: sources.j2
+    dest: /mnt/etc/apt/sources.list
