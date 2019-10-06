@@ -1,6 +1,6 @@
 {
   "variables": {
-    "output_dir": "output-ubuntu-zfs-efi-single"
+    "output_dir": "output-ubuntu-zfs-efi-vagrant"
   },
   "provisioners": [
     {
@@ -21,8 +21,11 @@
       ]
     },
     {
-      "type": "shell",
-      "script": "ansible/install-vbox-additions.sh"
+      "type": "ansible-local",
+      "playbook_dir": "ansible",
+      "playbook_file": "ansible/vagrant.yml",
+      "inventory_file": "ansible/inventory",
+      "command": "ANSIBLE_FORCE_COLOR=1 PYTHONUNBUFFERED=1 DEFAULT_STDOUT_CALLBACK=yaml ansible-playbook"
     },
     {
       "type": "shell",
@@ -75,5 +78,11 @@
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk2.vdi" ]
       ]
     }
+  ],
+  "post-processors": [
+	{
+	  "type": "vagrant"
+	}
+
   ]
 }

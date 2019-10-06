@@ -1,0 +1,3 @@
+- hosts: chroot
+  roles:
+    - role: 04-vagrant-setup

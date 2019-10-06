@@ -1,0 +1,26 @@
+---
+- apt:
+    name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common ]
+    state: present
+- name: install linux-headers for the kernel installed in the chroot
+  shell: apt-get -y install linux-headers-$(dpkg --get-selections | grep linux-image-4 | awk '{print $1}' | sed 's/linux-image-//')
+- user:
+    name: vagrant
+    groups: sudo
+    append: yes
+    state: present
+- file:
+    path: /home/vagrant/.ssh
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0700
+- lineinfile:
+    path: /home/vagrant/.ssh/authorized_keys
+    line: "{{ lookup('url', 'https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub') }}"
+- lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
