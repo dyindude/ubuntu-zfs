@@ -3,6 +3,6 @@ node("normandy") {
         checkout scm
     }
     stage('build') {
-        sh 'packer build -on-error=ask ubuntu-zfs-efi-vagrant.json'
+        sh 'packer build ubuntu-zfs-efi-vagrant.json'
     }
 }
