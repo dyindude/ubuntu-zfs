@@ -66,7 +66,6 @@
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_wait_timeout": "10000s",
-      "shutdown_command": "shutdown -P now",
       "guest_additions_path": "VBoxGuestAdditions.iso",
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "packer-ubuntu-zfs-efi-x86_64",
