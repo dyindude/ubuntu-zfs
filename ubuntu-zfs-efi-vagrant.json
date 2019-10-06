@@ -78,5 +78,11 @@
         [ "storageattach", "{{.Name}}", "--storagectl", "SATA Controller", "--port", "2", "--type", "hdd", "--medium", "{{ user `output_dir` }}/disk2.vdi" ]
       ]
     }
+  ],
+  "post-processors": [
+	{
+	  "type": "vagrant"
+	}
+
   ]
 }
