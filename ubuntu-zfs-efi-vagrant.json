@@ -1,6 +1,6 @@
 {
   "variables": {
-    "output_dir": "output-ubuntu-zfs-efi-vagrant{{env `BUILD_NUMBER`}}"
+    "output_dir": "output-ubuntu-zfs-efi-vagrant"
   },
   "provisioners": [
     {
