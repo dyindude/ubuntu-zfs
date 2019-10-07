@@ -1,6 +1,6 @@
 ---
 - apt:
-    name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common, linux-headers-generic, dkms ]
+    name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common, linux-headers-generic, dkms, build-essential ]
     state: present
 - user:
     name: vagrant
