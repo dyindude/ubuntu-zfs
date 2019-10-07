@@ -1,9 +1,7 @@
 ---
 - apt:
-    name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common ]
+  name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common, linux-headers-generic, dkms ]
     state: present
-- name: install linux-headers for the kernel installed in the chroot
-  shell: apt-get -y install linux-headers-$(dpkg --get-selections | grep linux-image-4 | awk '{print $1}' | sed 's/linux-image-//')
 - user:
     name: vagrant
     groups: sudo
