@@ -42,5 +42,4 @@
     mode: 0700
 - shell: sed -i 's#luks,discard,initramfs#luks,keyscript=/lib/cryptsetup/scripts/insecure,discard,initramfs#g' /etc/crypttab && update-initramfs -k all -u && sync
 #need net-tools for this
-- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" | cryptsetup luksAddKey /dev/sda1
-- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" | cryptsetup luksAddKey /dev/sdb
+- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" > /tmp/key && cryptsetup luksAddKey /dev/sda1 < /tmp/key && cryptsetup luksAddKey /dev/sdb < /tmp/key && rm -f /tmp/key
