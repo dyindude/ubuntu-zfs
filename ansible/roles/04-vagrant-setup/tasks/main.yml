@@ -27,15 +27,19 @@
 - copy:
     src: net
     dest: /etc/initramfs-tools/scripts/local-top/net
+    mode: 0700
 - copy:
     src: arp
     dest: /usr/share/initramfs-tools/hooks/arp
+    mode: 0700
 - copy:
     src: insecure
     dest: /lib/cryptsetup/scripts/insecure
+    mode: 0700
 - copy:
     src: gatewaymac
     dest: /lib/cryptsetup/scripts/gatewaymac
+    mode: 0700
 - shell: sed -i 's#luks,discard,initramfs#luks,keyscript=/lib/cryptsetup/scripts/insecure,discard,initramfs#g' /etc/crypttab && update-initramfs -k all -u && sync
 #need net-tools for this
 - shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" | cryptsetup luksAddKey /dev/sda1
