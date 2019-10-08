@@ -1,6 +1,6 @@
 ---
 - apt:
-    name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common, linux-headers-generic, dkms, build-essential ]
+  name: [ openssh-client, openssh-server, build-essential, dkms, nfs-common, linux-headers-generic, dkms, build-essential, net-tools ]
     state: present
 - user:
     name: vagrant
@@ -24,6 +24,19 @@
     line: '%sudo ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
 - shell: mkdir /tmp/vbox && mount -t iso9660 -o loop /root/VBoxGuestAdditions.iso /tmp/vbox && /tmp/vbox/VBoxLinuxAdditions.run --nox11 || true && umount /tmp/vbox && rm -rf vbox /root/VBoxGuestAdditions.iso
-- shell: sed -i 's#luks,discard,initramfs#luks,keyscript=/lib/cryptsetup/scripts/insecure,discard,initramfs#g' /etc/crypttab && echo '#!/bin/sh\necho -n "secret"' > /lib/cryptsetup/scripts/insecure && chmod +x /lib/cryptsetup/scripts/insecure && update-initramfs -k all -u && sync
-#- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n" | cryptsetup luksAddKey /dev/sda1
-#- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n" | cryptsetup luksAddKey /dev/sdb
+- copy:
+    src: net
+    dest: /etc/initramfs-tools/scripts/local-top/net
+- copy:
+    src: arp
+    dest: /usr/share/initramfs-tools/hooks/arp
+- copy:
+    src: insecure
+    dest: /lib/cryptsetup/scripts/insecure
+- copy:
+    src: gatewaymac
+    dest: /lib/cryptsetup/scripts/gatewaymac
+- shell: sed -i 's#luks,discard,initramfs#luks,keyscript=/lib/cryptsetup/scripts/insecure,discard,initramfs#g' /etc/crypttab && update-initramfs -k all -u && sync
+#need net-tools for this
+- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" | cryptsetup luksAddKey /dev/sda1
+- shell: echo -e "secret\n$(/lib/cryptsetup/scripts/gatewaymac)\n$(/lib/cryptsetup/scripts/gatewaymac)" | cryptsetup luksAddKey /dev/sdb

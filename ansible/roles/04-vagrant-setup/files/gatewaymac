@@ -1,0 +1,2 @@
+#!/bin/sh
+arp -a $(ip -4 route list 0/0 | cut -d ' ' -f 3) | cut -d ' ' -f 4 | head -c -1

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+PREREQ=""
+
+prereqs()
+{
+  echo "$PREREQ"
+}
+
+case $1 in
+# get pre-requisites
+prereqs)
+  prereqs
+  exit 0
+  ;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+for b in /usr/bin/head /bin/ping /usr/sbin/arp
+do
+	mkdir -p ${DESTDIR}${b%/*}
+	cp -pnL $b ${DESTDIR}${b}
+	for lib in $(ldd -d $(which $b) | grep "=>" | tr -s " " | cut -d " " -f 3 | xargs echo)
+	do
+	        mkdir -p ${DESTDIR}${lib%/*}
+		cp -pnL $lib ${DESTDIR}${lib}
+	done
+done

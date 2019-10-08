@@ -1,0 +1,20 @@
+#!/bin/sh
+
+PREREQ=""
+prereqs()
+{
+echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+prereqs
+exit 0
+;;
+esac
+
+. /scripts/functions
+# Begin real processing below this line
+configure_networking
+ping -c 1 8.8.8.8
+exit 0
